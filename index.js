@@ -1,8 +1,12 @@
 const uWS = require('uWebSockets.js');
 const { Server } = require("socket.io");
 
+
+// Create a µWebSockets.js app instance
 const app = uWS.App();
 
+
+// Socket.IO configuration (including CORS settings)
 const socketConfig = {
     cors: {
         origin: "*",
@@ -12,6 +16,7 @@ const socketConfig = {
     }
 };
 
+// Create a Socket.IO server instance and attach it to the µWebSockets.js app
 const io = new Server(socketConfig);
 io.attachApp(app);
 
@@ -20,17 +25,8 @@ app.get('/', (res, req) => {
     res.end('WebSocket server is running');
 });
 
-console.log('Environment variables:');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('PORT:', process.env.PORT);
-
-// Convert port to a number and use 8080 as fallback
-const portStr = process.env.PORT || '8080';
-const port = parseInt(portStr, 10);
-
-console.log(`Attempting to listen on port ${port} (parsed from "${portStr}")`);
-
 // Start the µWebSockets.js server on the desired port
+const port = process.env.PORT || 8080;
 app.listen(port, (token) => {
     if (token) {
         console.log(`Server running successfully on port ${port}`);
@@ -40,7 +36,7 @@ app.listen(port, (token) => {
     }
 });
 
-// Socket.IO event handlers
+// Socket.IO event handlers (legacy logic preserved)
 io.on('connection', function (socket) {
     console.log('a user connected');
 
