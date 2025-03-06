@@ -1,10 +1,8 @@
 const { App } = require('uWebSockets.js');
 const { Server } = require("socket.io");
 
-// Create a µWebSockets.js app instance
 const app = new App();
 
-// Socket.IO configuration (including CORS settings)
 const socketConfig = {
     cors: {
         origin: "*",
@@ -14,26 +12,46 @@ const socketConfig = {
     }
 };
 
-// Create a Socket.IO server instance and attach it to the µWebSockets.js app
 const io = new Server(socketConfig);
 io.attachApp(app);
 
-// Define a simple route using µWebSockets.js (handler signature: (res, req))
 app.get('/', (res, req) => {
     res.writeHeader('Content-Type', 'text/plain');
     res.end('WebSocket server is running');
 });
 
+console.log('Environment variables:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+
+// Convert port to a number and use 8080 as fallback
+const portStr = process.env.PORT || '8080';
+const port = parseInt(portStr, 10);
+
+console.log(`Attempting to listen on port ${port} (parsed from "${portStr}")`);
+
 // Start the µWebSockets.js server on the desired port
-const port = process.env.PORT || 8080;
 app.listen(port, (token) => {
     if (token) {
-        console.log(`Server running on port ${port}`);
+        console.log(`Server running successfully on port ${port}`);
     } else {
         console.error(`Failed to listen on port ${port}`);
-        // If we failed to listen on the provided port, don't try another port
-        // This will make the problem more obvious rather than silently continuing
-        process.exit(1);
+
+        // Try one more approach - on some platforms, port 0 means "assign me any available port"
+        if (port !== 0) {
+            console.log('Trying alternative approach with port 0...');
+            app.listen(0, (backupToken) => {
+                if (backupToken) {
+                    console.log('Server running on a dynamically assigned port');
+                } else {
+                    console.error('Failed to listen on any port. Exiting.');
+                    process.exit(1);
+                }
+            });
+        } else {
+            console.error('Cannot start server. Exiting.');
+            process.exit(1);
+        }
     }
 });
 
