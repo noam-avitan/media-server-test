@@ -1,0 +1,13 @@
+{
+  "name": "websocket.frontline.io",
+  "version": "1.0.4",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.3",
+    "socket.io": "^4.6.1",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.51.0"
+  }
+}
