@@ -1,7 +1,7 @@
-const { App } = require('uWebSockets.js');
+const uWS = require('uWebSockets.js');
 const { Server } = require("socket.io");
 
-const app = new App();
+const app = uWS.App();
 
 const socketConfig = {
     cors: {
@@ -36,22 +36,7 @@ app.listen(port, (token) => {
         console.log(`Server running successfully on port ${port}`);
     } else {
         console.error(`Failed to listen on port ${port}`);
-
-        // Try one more approach - on some platforms, port 0 means "assign me any available port"
-        if (port !== 0) {
-            console.log('Trying alternative approach with port 0...');
-            app.listen(0, (backupToken) => {
-                if (backupToken) {
-                    console.log('Server running on a dynamically assigned port');
-                } else {
-                    console.error('Failed to listen on any port. Exiting.');
-                    process.exit(1);
-                }
-            });
-        } else {
-            console.error('Cannot start server. Exiting.');
-            process.exit(1);
-        }
+        process.exit(1);
     }
 });
 
